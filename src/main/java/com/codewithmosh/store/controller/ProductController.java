@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.codewithmosh.store.dto.ProductDto;
 import com.codewithmosh.store.entities.Product;
 import com.codewithmosh.store.mappers.ProductMapper;
+import com.codewithmosh.store.repositories.CategoryRepository;
 import com.codewithmosh.store.repositories.ProductRepository;
 
 import lombok.AllArgsConstructor;
@@ -28,6 +29,8 @@ public class ProductController {
     private final ProductRepository productRepository;
 
     private final ProductMapper productMapper;
+
+    private final CategoryRepository categoryRepository;
 
     @GetMapping()
     public List<ProductDto> getAllProducts(){
@@ -62,8 +65,16 @@ public class ProductController {
         @RequestBody ProductDto productDto,
         UriComponentsBuilder uriBuilder
     ){
-
+    
         var product = productMapper.toProduct(productDto);
+
+        var category = categoryRepository.findById(productDto.getCategoryId()).orElse(null);
+
+        if (category == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        product.setCategory(category);
 
         productRepository.save(product);
 
@@ -79,12 +90,21 @@ public class ProductController {
         @RequestBody ProductDto productDto,
         @PathVariable Long id
     ){
+        var category = categoryRepository.findById(productDto.getCategoryId()).orElse(null);
+
+        if (category == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        
 
         var product = productRepository.findById(id).orElse(null);
 
         if (product == null){
             return ResponseEntity.notFound().build();
         }
+
+        product.setCategory(category);
 
         productMapper.updateProduct(productDto, product);
 

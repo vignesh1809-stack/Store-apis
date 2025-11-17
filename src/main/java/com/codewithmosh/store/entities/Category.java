@@ -8,6 +8,8 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,6 +25,7 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "category")
+    @JsonManagedReference
     private Set<Product> products = new HashSet<>();
 
     public Category(String name) {
