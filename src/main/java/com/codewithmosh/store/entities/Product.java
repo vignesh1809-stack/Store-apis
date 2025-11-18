@@ -29,8 +29,13 @@ public class Product {
     @Column(name = "price")
     private BigDecimal price;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.PERSIST,fetch=FetchType.LAZY )
     @JoinColumn(name = "category_id")
     @JsonBackReference
     private Category category;
+
+    public Object getProductId() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getProductId'");
+    }
 }
