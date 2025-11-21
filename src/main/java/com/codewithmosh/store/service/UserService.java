@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.codewithmosh.store.repositories.UserRepository;
 
-import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -34,6 +33,8 @@ public class UserService  implements UserDetailsService  {
         );
 
     }
+
+    
 
     
 }
