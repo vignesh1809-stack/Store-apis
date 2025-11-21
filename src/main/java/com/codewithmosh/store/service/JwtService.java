@@ -1,10 +1,12 @@
 package com.codewithmosh.store.service;
 
 import java.util.Date;
+import java.lang.String;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -33,11 +35,7 @@ public class JwtService {
 
     public Boolean validateTocken(String tocken){
         try{
-        var Claims =Jwts.parser()
-                .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
-                .build()
-                .parseSignedClaims(tocken)
-                .getPayload();
+        var Claims =getClaims(tocken);
 
         return Claims.getExpiration().after(new Date());
         }catch(JwtException ex){
@@ -45,6 +43,21 @@ public class JwtService {
 
         }
 
+    }
+
+    public String getEmailFromTocken(String tocken){
+            var Claims = getClaims(tocken);
+            return Claims.getSubject();
+    }
+
+
+    private Claims getClaims(String tocken){
+
+        return Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                .build()
+                .parseSignedClaims(tocken)
+                .getPayload();
     }
 
     
