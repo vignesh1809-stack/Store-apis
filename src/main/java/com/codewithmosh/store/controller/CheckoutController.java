@@ -1,9 +1,6 @@
 package com.codewithmosh.store.controller;
 import java.util.Map;
-
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,8 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codewithmosh.store.dto.CheckoutRequestDto;
 import com.codewithmosh.store.dto.OrderDto;
 import com.codewithmosh.store.exception.CartItemsNotFoundException;
-import com.codewithmosh.store.exception.NoOrdersForTheUserException;
-import com.codewithmosh.store.exception.OrderNotFoundException;
 import com.codewithmosh.store.exception.UnAuthorizedUserException;
 
 import com.codewithmosh.store.service.CheckoutService;
@@ -31,10 +26,10 @@ public class CheckoutController {
     @PostMapping
     public ResponseEntity<OrderDto> createOrder(
         @RequestBody CheckoutRequestDto request
-    ){
+    )throws Exception {
         
 
-         var OrderDto = orderService.createOrderService(request);
+        var OrderDto = orderService.createOrderService(request);
         return ResponseEntity.ok().body(OrderDto);
 
 
