@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -34,8 +35,7 @@ public class Product {
     @JsonBackReference
     private Category category;
 
-    public Object getProductId() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProductId'");
-    }
+
+    @OneToMany(mappedBy = "product")
+    private List<OrderItems> orderItems;
 }

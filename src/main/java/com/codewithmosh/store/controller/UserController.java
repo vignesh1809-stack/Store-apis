@@ -23,6 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.codewithmosh.store.dto.CreateUserRequest;
 import com.codewithmosh.store.dto.UpdateUserRequest;
 import com.codewithmosh.store.dto.UserDto;
+import com.codewithmosh.store.entities.Role;
 import com.codewithmosh.store.entities.User;
 import com.codewithmosh.store.mappers.UserMapper;
 import com.codewithmosh.store.repositories.UserRepository;
@@ -83,6 +84,7 @@ public class UserController {
 
         var user=userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.USER);
 
         userRepository.save(user);
 

@@ -13,5 +13,8 @@ spring:
       ddl-auto: update
   jwt:
     secret: ${JWT_SECRET}
+    accessTockenExpiration: 7200 #5m 
+    refreshTockenExpiration: 604800 #7d
+
 
 

@@ -3,6 +3,7 @@ package com.codewithmosh.store.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -14,8 +15,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.codewithmosh.store.entities.Role;
 import com.codewithmosh.store.filters.JwtTockenAuthentication;
 
 import lombok.AllArgsConstructor;
@@ -59,10 +62,17 @@ public class SecurityConfig {
             )
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/login").permitAll()
-            .requestMatchers("/users/**").permitAll()   
+            .requestMatchers("/login/**").permitAll()
+            .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
             .anyRequest().authenticated())
-            .addFilterBefore(jwtTockenAuthentication,UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtTockenAuthentication,UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling(c ->{
+                c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+                c.accessDeniedHandler(((request,response,accessDeniedException)->
+                response.setStatus(HttpStatus.FORBIDDEN.value())
+            )); 
+
+            });
 
         return http.build();
 

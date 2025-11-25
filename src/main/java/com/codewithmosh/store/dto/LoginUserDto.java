@@ -8,9 +8,11 @@ import lombok.Data;
 @Data
 public class LoginUserDto {
 
+
     @NotBlank
     @Email
     private String Email;
+
     @NotBlank
     @Size(min=4)
     private String Password;
