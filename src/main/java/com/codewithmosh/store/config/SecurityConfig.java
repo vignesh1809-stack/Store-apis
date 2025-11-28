@@ -3,6 +3,7 @@ package com.codewithmosh.store.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -64,7 +65,10 @@ public class SecurityConfig {
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/login/**").permitAll()
             .requestMatchers("/checkout/**").permitAll()
-            .requestMatchers("/users/**").permitAll()
+            .requestMatchers(HttpMethod.POST,"/users/**").permitAll()
+            .requestMatchers(HttpMethod.POST,"/products/**").hasRole(Role.ADMIN.name())
+            .requestMatchers(HttpMethod.PUT,"/products/**").hasRole(Role.ADMIN.name())
+            .requestMatchers(HttpMethod.DELETE,"/products/**").hasRole(Role.ADMIN.name())
              .requestMatchers(
                         "/v3/api-docs/**",
                         "/swagger-ui/**",
