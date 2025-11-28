@@ -1,6 +1,6 @@
 package com.codewithmosh.store.service;
 
-import java.math.BigDecimal;
+
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -9,15 +9,11 @@ import com.codewithmosh.store.dto.OrderDto;
 import com.codewithmosh.store.entities.Order;
 import com.codewithmosh.store.exception.CartItemsNotFoundException;
 import com.codewithmosh.store.exception.CartNotFoundException;
+import com.codewithmosh.store.exception.PaymentException;
 import com.codewithmosh.store.exception.UnAuthorizedUserException;
-import com.codewithmosh.store.mappers.OrderMapper;
 import com.codewithmosh.store.repositories.CartRepository;
 import com.codewithmosh.store.repositories.OrderRepository;
 import com.codewithmosh.store.repositories.UserRepository;
-import com.stripe.exception.StripeException;
-import com.stripe.model.checkout.Session;
-import com.stripe.param.checkout.SessionCreateParams;
-
 
 
 import lombok.RequiredArgsConstructor;
@@ -31,9 +27,12 @@ public class CheckoutService {
     private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
     private final CartService cartService;
+    private final PaymentGateway paymentGateway;
 
-    @Value("")
+    @Value("${websiteUrl}")
     private String websiteUrl;
+
+
 
     public  OrderDto  createOrderService(CheckoutRequestDto request) throws Exception{
 
@@ -59,41 +58,38 @@ public class CheckoutService {
         var order = Order.fromCart(cart,user);
         orderRepository.save(order);
 
-        //Create checkout session
-            var builder = SessionCreateParams.builder()
-                    .setMode(SessionCreateParams.Mode.PAYMENT)
-                    .setSuccessUrl(websiteUrl + "checkout-success?orderId=" + order.getId())
-                    .setCancelUrl(websiteUrl + "checkout-failure");
-
-            order.getOrderItems().forEach(item -> {
-                var lineItem = SessionCreateParams.LineItem.builder()
-                    .setQuantity((long) item.getQuantity())
-                    .setPriceData(
-                        SessionCreateParams.LineItem.PriceData.builder()
-                            .setCurrency("usd")
-                            .setUnitAmountDecimal(item.getUnitPrice())
-                            .setProductData(
-                                SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                    .setName(item.getProduct().getName())
-                                    .build()
-                            )
-                            .build()
-                    )
-                    .build();
-
-                builder.addLineItem(lineItem);
-            });
-
-            var session = Session.create(builder.build());
-
-
-       
-        cartService.clearCartService(cartId);
+        try{
+            
+            var session = paymentGateway.createCheckoutSession(order);
+            cartService.clearCartService(cartId);
      
 
-        return new OrderDto(order.getId(),session.getUrl());
-        
+            return new OrderDto(order.getId(),session.getUrl());
+
+        }catch(PaymentException ex){
+            System.out.println(ex);
+            orderRepository.delete(order);
+            throw ex;
+
+        }
     }
+
+    public  void  handleWebhook(WebhookRequest request){
+
+        paymentGateway.parseWebhookRequest(request).ifPresent(
+            paymentResult ->{
+                var order = orderRepository.findById(Long.valueOf(paymentResult.getUserId())).orElseThrow();
+                    order.setStatus(paymentResult.getPaymentStatus());
+                    orderRepository.save(order);
+
+            }
+        );
+
+         
+     }
+
+       
+    
 
     
 }

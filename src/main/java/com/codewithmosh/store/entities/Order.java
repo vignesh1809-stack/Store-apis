@@ -48,7 +48,7 @@ public class Order {
 
     private BigDecimal totalPrice;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.ALL,CascadeType.REMOVE})
     private List<OrderItems> OrderItems = new ArrayList<>();
 
 

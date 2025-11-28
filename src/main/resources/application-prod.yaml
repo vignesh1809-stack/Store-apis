@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: store
+
+  datasource:
+    url: ${spring_datasource_url}
+
+
+websiteUrl: https://mystore.com
+
+
+    
+
+

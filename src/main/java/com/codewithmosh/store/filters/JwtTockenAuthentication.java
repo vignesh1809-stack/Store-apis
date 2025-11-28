@@ -50,6 +50,13 @@ public class JwtTockenAuthentication extends OncePerRequestFilter{
             return;
             
         }
+        String path = request.getRequestURI();
+
+        if (path.equals("/checkout/webhook") || path.startsWith("/checkout/webhook")) {
+             filterChain.doFilter(request, response);
+                return;
+        }
+
 
         
         var authentication = new UsernamePasswordAuthenticationToken(

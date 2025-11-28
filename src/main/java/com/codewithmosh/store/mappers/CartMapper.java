@@ -11,7 +11,6 @@ import com.codewithmosh.store.entities.CartItem;
 
 @Mapper(componentModel="spring")
 public interface CartMapper {
-    
     @Mapping(target = "price" , expression = "java(cart.getTotalPrice())")
     CartDto toDto(Cart cart);
 

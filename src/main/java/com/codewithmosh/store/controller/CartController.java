@@ -117,7 +117,6 @@ public class CartController {
 
      @ExceptionHandler(CartNotFoundException.class)
      public ResponseEntity<Map<String,String>> handleCartNotFound(){
-
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("ERROR","CART NOT FOUND"));
      }
 
