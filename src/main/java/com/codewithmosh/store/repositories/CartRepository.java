@@ -1,17 +1,13 @@
 package com.codewithmosh.store.repositories;
 
 
-import com.codewithmosh.store.dto.CartItemDto;
-import com.codewithmosh.store.entities.Cart;
-import com.codewithmosh.store.entities.CartItem;
 
-import java.util.Optional;
-import java.util.Set;
+import com.codewithmosh.store.entities.Cart;
 import java.util.UUID;
 
-import org.springframework.data.jpa.repository.EntityGraph;
+
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+
 
 
 public interface CartRepository extends JpaRepository<Cart,UUID>{
