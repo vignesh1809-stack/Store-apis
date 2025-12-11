@@ -1,0 +1,54 @@
+name: Java CI Pipeline 
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+     - main
+
+jobs:
+  buid:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code 
+        uses: actions/checkout@v4
+    
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          
+    
+      - name: Cache Maven Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: maven-${{ runner.os }}
+
+      - name: Build with maven
+        run: mvn clean package
+        
+      - name: Upload JAR Artifact 
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-build
+          path: target/*.jar 
+
+ 
+      
+      
+        
+      
+      
+
+    
+
+
+      
+
+        
