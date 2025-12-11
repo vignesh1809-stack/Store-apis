@@ -39,6 +39,17 @@ jobs:
           name: java-build
           path: target/*.jar 
 
+      - name: Login to Docker
+        run: echo "${{env.DOCKER_PASSWORD}}" | docker login -u "${{env.DOCKER_USERNAME}}" --password-stdin
+
+      - name: Build Docker Imahe
+        run: docker build -t ${{env.DOCKER_USERNAME}}/store-app:latest
+
+      - name: Push Docker Image
+        run: docker push ${{env.DOCKER_USERNAME}}/store-app:latest
+
+      
+
  
       
       
